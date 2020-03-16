@@ -34,6 +34,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
    */
   num_particles = 100;  // TODO: Set the number of particles
   particles.resize(num_particles); 
+  weights.resize(num_particles);
 
   // Initialize all particles to first position with injected Gaussian noise
   default_random_engine gen;
@@ -46,6 +47,9 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
   	particles[i].x = x_noisy(gen);
   	particles[i].y = y_noisy(gen);
   	particles[i].theta = theta_noisy(gen);
+	particles[i].weight = 1.0;
+
+	weights[i] = 1.0; // Set all weights initially to 1.
   }
 }
 
@@ -264,8 +268,8 @@ void ParticleFilter::resample() {
   // particles to keep
   vector<Particle> sampled_particles;
   for (int i=0; i<num_particles; i++) {
-	int part_i = bag_of_particles(gen);
-	sampled_particles.push_back(particles[i]);
+	int part_idx = bag_of_particles(gen);
+	sampled_particles.push_back(particles[part_idx]);
   }
 
   // Lastly, replace 'particles' with 'sampled_particles'
